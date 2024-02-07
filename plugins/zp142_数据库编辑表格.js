@@ -65,9 +65,7 @@ function excel() {
     const oData = JSON.parse(JSON.stringify(data))
     load(U => {
         Head.forEach((v, i) => data[0][i] = { v, s: { ht: 2, bl: 1 } })
-        let workbook = U.createUniverSheet({ sheets: { "sheet-01": { name: "_", cellData: data, columnData, rowCount: list.length + 9, columnCount: Head.length + 3 } } })
-        // const savedData = workbook.save()
-        window.workbook = container.workbook = workbook
+        let workbook = container.workbook = U.createUniverSheet({ sheets: { "sheet-01": { name: "_", cellData: data, columnData, rowCount: list.length + 9, columnCount: Head.length + 3 } } })
         window.diff = container.diff = () => {
             let nData = workbook.save()
             let diff = {}
@@ -92,9 +90,7 @@ function excel() {
             log(nData, diff, changed)
         }
 
-        // https://univer.work/playground/?title=React%20and%20Facade%20API
-        const API = window.UniverFacade.FUniver.newAPI(U)
-        container.API = API
+        const API = container.API = window.UniverFacade.FUniver.newAPI(U)
         API.onCommandExecuted(cmd => {
             if (cmd.type !== 2 || cmd.id !== "sheet.mutation.set-range-values") return
             // log(cmd)
@@ -246,8 +242,6 @@ function load(cb) {
         U.registerPlugin(window.UniverSheetsNumfmt.UniverSheetsNumfmtPlugin)
         U.registerPlugin(window.UniverEngineFormula.UniverFormulaEnginePlugin)
         U.registerPlugin(window.UniverSheetsFormula.UniverSheetsFormulaPlugin)
-
         cb(U)
     })
-
 }
