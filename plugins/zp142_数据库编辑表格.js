@@ -1,5 +1,5 @@
 let ref, exc, container, props
-let list, Q, O, count
+let list, Q, O, count, model
 
 function init(_ref) {
     ref = _ref
@@ -7,15 +7,13 @@ function init(_ref) {
     container = ref.container
     props = ref.props
     if (parseInt(getComputedStyle(container).height) < 200) container.style.height = "400px"
-    if (props.data) {
-        if (Array.isArray(props.data)) {
-            list = props.data
-        } else if (props.data.all && props.data.model) {
-            list = props.data.all
-            count = props.data.count
-            Q = JSON.parse(props.data.query)
-            O = JSON.parse(props.data.option)
-        }
+    list = props.data
+    if (list && list.all && list.model) {
+        count = list.count
+        Q = JSON.parse(list.query)
+        O = JSON.parse(list.option)
+        model = list.model
+        list = list.all
     }
     list = list ? JSON.parse(JSON.stringify(list)) : []
     excel()
