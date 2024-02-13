@@ -38,6 +38,14 @@ function excel() {
             if (ci > -1) R[ci] = { ri, ci, zp: k, v, s: { ht: align[k] } }
         }
 
+        function getIn(o, path) {
+            path = path.split(".")
+            return path.reduce((curr, k) => {
+                if (!curr) return
+                return curr[k]
+            }, o)
+        }
+
         list.forEach((o, i) => {
             R = {}
             ri = i
@@ -49,6 +57,21 @@ function excel() {
             if (!Head.includes(k)) Head.push(k)
             ci = Head.indexOf(k)
             R[ci] = { ri, ci, zp: k, v }
+        }
+
+        function recur(K, O) {
+            if (O && typeof O === "object") {
+                Object.keys(O).forEach(k => {
+                    let v = O[k]
+                    k = K + "." + k
+                    if (Array.isArray(v)) {
+                        if (v[0] && typeof v[0] === "object" && !Array.isArray(v[0])) return v.forEach((a, i) => recur(k + "." + i, a))
+                        add(k, JSON.stringify(v))
+                    } else if (v && typeof v === "object") {
+                        recur(k, v)
+                    } else add(k, v)
+                })
+            } else add(K, O)
         }
 
         list.forEach((o, i) => {
@@ -94,29 +117,6 @@ function excel() {
             // log(cmd)
         })
     })
-}
-
-function getIn(o, path) {
-    path = path.split(".")
-    return path.reduce((curr, k) => {
-        if (!curr) return
-        return curr[k]
-    }, o)
-}
-
-function recur(K, O) {
-    if (O && typeof O === "object") {
-        Object.keys(O).forEach(k => {
-            let v = O[k]
-            k = K + "." + k
-            if (Array.isArray(v)) {
-                if (v[0] && typeof v[0] === "object" && !Array.isArray(v[0])) return v.forEach((a, i) => recur(k + "." + i, a))
-                add(k, JSON.stringify(v))
-            } else if (v && typeof v === "object") {
-                recur(k, v)
-            } else add(k, v)
-        })
-    } else add(K, O)
 }
 
 $plugin({
