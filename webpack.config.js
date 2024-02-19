@@ -5,7 +5,7 @@ module.exports = {
     mode: process.env.mode || "development",
     devtool: false,
     entry: {
-        "zp142": "./src/zp142_数据库编辑表格.js",
+        "zp142": "./src/zp142_数据库Excel表.js",
     },
     output: {
         path: path.join(__dirname, "build/"),
