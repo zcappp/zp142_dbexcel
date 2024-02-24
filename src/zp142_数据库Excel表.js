@@ -1,5 +1,16 @@
 function init(ref) {
     ref.exc('load(Univers)', { Univers }, () => {
+        const { props } = ref
+        if (parseInt(getComputedStyle(ref.container).height) < 200) ref.container.style.height = "400px"
+        if (!props.path) warn("请配置数据路径")
+        let D = ref.excA(props.path.startsWith("$c.x") ? props.path : "$c.x." + props.path)
+        if (!D || !D.all) {
+            ref.retry = (ref.retry || 0) + 1
+            return ref.retry < 20 ? setTimeout(() => init(ref), 200) : warn("没有数据")
+        } else if (ref.U) {
+            ref.U.dispose()
+        }
+
         let U = new window.UniverCore.Univer({ theme: window.UniverDesign.defaultTheme })
         U.registerPlugin(window.UniverDocs.UniverDocsPlugin, { hasScroll: false })
         U.registerPlugin(window.UniverEngineRender.UniverRenderEnginePlugin)
@@ -9,15 +20,8 @@ function init(ref) {
         U.registerPlugin(window.UniverSheetsNumfmt.UniverSheetsNumfmtPlugin)
         U.registerPlugin(window.UniverEngineFormula.UniverFormulaEnginePlugin)
         U.registerPlugin(window.UniverSheetsFormula.UniverSheetsFormulaPlugin)
+        ref.U = U
 
-        const { props } = ref
-        if (parseInt(getComputedStyle(ref.container).height) < 200) ref.container.style.height = "400px"
-        if (!props.path) warn("请配置数据路径")
-        let D = ref.excA(props.path.startsWith("$c.x") ? props.path : "$c.x." + props.path)
-        if (!D || !D.all) {
-            ref.retry = (ref.retry || 0) + 1
-            return ref.retry < 20 ? setTimeout(() => init(ref), 200) : warn("没有数据")
-        }
         let list = JSON.parse(JSON.stringify(D.all))
         let Head = []
         let data = { "0": {} }
@@ -239,7 +243,8 @@ $plugin({
         show: "p.P.enableCRUD"
     }],
     css,
-    init
+    init,
+    destroy: ref => ref.U.dispose()
 })
 
 
