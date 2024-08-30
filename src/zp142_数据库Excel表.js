@@ -2,7 +2,7 @@ function init(ref) {
     ref.exc('load(Univers)', { Univers }, () => {
         const { props } = ref
         if (parseInt(getComputedStyle(ref.container).height) < 200) ref.container.style.height = "400px"
-        if (!props.path) warn("请配置数据路径")
+        if (!props.path) ref.isDev ? warn("请配置数据路径") : ""
         let D = ref.excA(props.path.startsWith("$c.x") ? props.path : "$c.x." + props.path)
         if (!D || !D.all) {
             ref.retry = (ref.retry || 0) + 1
